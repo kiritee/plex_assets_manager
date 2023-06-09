@@ -1,0 +1,20 @@
+--- orig-plexmovie.py	2019-07-02 11:33:07.000000000 +0300
++++ /usr/lib/plexmediaserver/Resources/Plug-ins-4b7ace214/PlexMovie.bundle/Contents/Code/__init__.py	2019-07-17 05:51:21.223584172 +0300
+@@ -1185,11 +1185,16 @@
+     args['cache_time'] = 0
+ 
+   tmdb_dict = GetTMDBJSON(url=TMDB_MOVIE % (metadata_id, lang), **args)
++  preferred_title = tmdb_dict.get('title') if isinstance(tmdb_dict, dict) else None
+ 
+   if not isinstance(tmdb_dict, dict) or 'overview' not in tmdb_dict or tmdb_dict['overview'] is None or tmdb_dict['overview'] == "":
+-    # Retry the query with no language specified if we didn't get anything from the initial request.
++    # Retry the query with no language specified ( = TMDb default "en-US") if we didn't get an overview from the initial request.
+     tmdb_dict = GetTMDBJSON(url=TMDB_MOVIE % (metadata_id, ''), **args)
+ 
++    if isinstance(tmdb_dict, dict) and preferred_title:
++      # but still use the title from the original request
++      tmdb_dict['title'] = preferred_title
++
+   return tmdb_dict
+ 
+ 

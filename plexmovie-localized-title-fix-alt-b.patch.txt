@@ -1,0 +1,20 @@
+--- orig-plexmovie.py	2019-07-02 11:33:07.000000000 +0300
++++ /usr/lib/plexmediaserver/Resources/Plug-ins-4b7ace214/PlexMovie.bundle/Contents/Code/__init__.py	2019-07-17 07:14:48.647663822 +0300
+@@ -1021,13 +1021,15 @@
+   ret = (fallback, fallback_year)
+ 
+   try:
+-    tmdb_data = get_base_tmdb_data('tt%s' % guid, lang if Prefs['title'] else '', force)
++    tmdb_data = get_base_tmdb_data('tt%s' % guid, lang, force)
+ 
+     if tmdb_data and 'release_date' in tmdb_data:
+       try: fallback_year = tmdb_data['release_date'][:4]
+       except: pass
+ 
+-    if tmdb_data and 'title' in tmdb_data:
++    if not Prefs['title'] and tmdb_data.get('original_title'):
++      ret = (tmdb_data['original_title'], fallback_year)
++    elif tmdb_data and 'title' in tmdb_data:
+       ret = (tmdb_data['title'], fallback_year)
+     else:
+       return None, None
