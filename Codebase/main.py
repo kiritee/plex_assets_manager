@@ -4,9 +4,6 @@ Created on Wed May  6 00:16:32 2020
 
 @author: konark
 """
-test = 0
-test_case = 6
-log = 1
 
 from conf import *
 import os
@@ -16,42 +13,28 @@ from shutil import move, Error
 from pathlib import Path
 from plexapi.server import PlexServer 
 
-if test == 1:
-    movies_path = codebase + "/Test_" + str(test_case)
-elif test == 0:
-    movies_path = plex_movies_path
-else:
-    print('Test field not set properly')
-    raise
-
-if log == 1:
+if LOG:
     log_file = open(codebase+"/log.txt",'w+',encoding="utf-8")
 else:
     log_file = sys.stdout
 
 
-plex = PlexServer(plex_url, token)
-movies = plex.library.section('Movies')
+plex = PlexServer(PLEX_URL, TOKEN)
+movies = plex.library.section(MOVIES_LIBRARY)
+movies_path = movies.location[0]
 
-for video in movies.search():
-    title = video.title       
-    year = video.year
-    location = video.locations[0]
-    
-    location_path = Path(location.replace(plex_movies_path, movies_path))
-    
-    current_folder_path = str(location_path.parent)
+for movie in movies.all():
+
     
     title_validchars = re.sub('[/?%*|"<>:]+', "-", title)
-    correct_folder_name = "{0} ({1})".format(title_validchars,year)
+    correct_folder_name = f"{title_validchars} ({year})"
     correct_folder_path = movies_path  + "/" + correct_folder_name
     
-    print("\n\n{2}\nOld location :\n{0}\nNew location :\n{1}".format(current_folder_path,correct_folder_path,correct_folder_name), file=log_file)
+    print(f"\n\n{correct_folder_name}\nOld location :\n{current_folder_path}\nNew location :\n{correct_folder_path}", file=log_file)
     
     if current_folder_path == correct_folder_path:
         print("Already exists in correct folder. Exiting", file=log_file)
-
-    
+  
     elif current_folder_path == movies_path:
         print("files are in base location. moving following files", file=log_file)  
   

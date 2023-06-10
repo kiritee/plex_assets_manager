@@ -4,9 +4,10 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-youtube-dl = "*"
 plexapi = "*"
 cinemagoer = "*"
+yt-dlp = "==2023.3.4"
+phantomjs = "*"
 
 [dev-packages]
 
