@@ -3,11 +3,16 @@
 """
 Configuration file
 """
+import os
+from dotenv import load_dotenv, find_dotenv
+_ = load_dotenv(find_dotenv)
+
+PLEX_API_TOKEN  = os.getenv('PLEX_API_TOKEN')
 
 LOG = True
 QUIET = False
 
-PLEX_API_TOKEN = '1oZHkXsyW9X-vSHtXDsu'
+
 PLEX_URL = "http://127.0.0.1:32400"
 
 MOVIES_LIBRARY = 'Movies'
