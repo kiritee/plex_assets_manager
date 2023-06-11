@@ -2,6 +2,7 @@
 plexmovie-*.txt
 .DS_Store
 log.txt
+.gitignore
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
