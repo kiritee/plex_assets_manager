@@ -1,5 +1,7 @@
 #application specific files
-plexmovie-*.*
+plexmovie-*.txt
+.DS_Store
+log.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
