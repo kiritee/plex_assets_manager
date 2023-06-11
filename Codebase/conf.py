@@ -4,12 +4,10 @@
 Configuration file
 """
 
-#location of log file
-codebase = "/Users/konark/Work/projects/plex_extension/Codebase"
 LOG = True
-plex_movies_path = "/Volumes/Backup Plus/Movies"
+QUIET = False
 
-TOKEN = '1oZHkXsyW9X-vSHtXDsu'
+PLEX_API_TOKEN = '1oZHkXsyW9X-vSHtXDsu'
 PLEX_URL = "http://127.0.0.1:32400"
 
 MOVIES_LIBRARY = 'Movies'
