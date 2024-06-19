@@ -1,4 +1,4 @@
-# Plex Assets Manager
+# Plex Asset Manager
 
 A Python project for managing and organizing Plex media library.
 
@@ -14,7 +14,7 @@ A Python project for managing and organizing Plex media library.
 To install the package, you can use `pip`:
 
 ```bash
-pip install plex-extension
+pip install plex-asset-manager
 ```
 
 ## Usage
@@ -22,7 +22,7 @@ pip install plex-extension
 You can use the package by running the main script with the desired function:
 
 ```bash
-python -m plex_extension.main <function_id> [options]
+python -m plex_asset_manager <function_id> [options]
 ```
 
 ### Functions
@@ -37,7 +37,7 @@ python -m plex_extension.main <function_id> [options]
 To reorganize folders, you would run:
 
 ```bash
-python -m plex_extension.main 1
+python -m plex_asset_manager 1
 ```
 
 ## Command Line Options
@@ -68,6 +68,22 @@ MAX_DAILY_SUB_DOWNLOADS = 20
 SUB_DOWNLOAD_TRACK_FILE = "sub_download_tracker.txt"
 ```
 
+## Running the Package
+
+To run the package, use the following command format:
+
+```bash
+python -m plex_asset_manager <function_id> [options]
+```
+
+### Example Command
+
+To download all trailers:
+
+```bash
+python -m plex_asset_manager 3
+```
+
 ## Contributing
 
 Contributions are welcome! Please fork the repository and submit a pull request.
@@ -75,3 +91,4 @@ Contributions are welcome! Please fork the repository and submit a pull request.
 ## License
 
 This project is licensed under the MIT License.
+```

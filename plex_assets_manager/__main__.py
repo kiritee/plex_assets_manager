@@ -39,6 +39,6 @@ def main():
     else:
         print("Invalid value of 'function'. No corresponding method found.")
 
-
 if __name__ == '__main__':
     main()
+
