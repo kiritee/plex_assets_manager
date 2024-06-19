@@ -3,9 +3,10 @@
 """
 Configuration file
 """
+
 import os
 from dotenv import load_dotenv, find_dotenv
-_ = load_dotenv(find_dotenv)
+_ = load_dotenv(find_dotenv())
 
 PLEX_API_TOKEN  = os.getenv('PLEX_API_TOKEN')
 OPENSUBTITLES_API_KEY  = os.getenv('OPENSUBTITLES_API_KEY')

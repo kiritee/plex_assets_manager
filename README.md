@@ -1,4 +1,4 @@
-# Plex Extension
+# Plex Assets Manager
 
 A Python project for managing and organizing Plex media library.
 
