@@ -7,26 +7,40 @@ from pathlib import Path
 from utils import *
 import random
 import time
-from conf import MAX_SLEEP_DURATION
-
+from datetime import datetime
+from conf import *
+import subprocess
 
 class PlexMovieLib:
-    def __init__(self, plex_token, plex_url="http://127.0.0.1:32400", movies_library="Movies", log=False, quiet=False):
+    def __init__(self, plex_token = PLEX_API_TOKEN, plex_url=PLEX_URL, movies_library=MOVIES_LIBRARY, log=LOG, quiet=QUIET):
         self.plex = PlexServer(plex_url, plex_token)
         self.movies = self.plex.library.section(movies_library)
-        self.movies_path = self.movies.location[0]
+        self.movies_path = self.movies.locations[0]
         self.quiet=quiet
+        self.id = self.movies.key
         if log:
             self.log_file = open("log.txt",'w+',encoding="utf-8")
         else:
             self.log_file = sys.stdout
+        self.subtitle_download_count, self.last_run_date = self.load_subtitle_download_count()
 
-    
     def printText(self,text):
         if not self.quiet:
             print(text,file=self.log_file)
 
+    #function to force a Plex Media Scan of the library
+    def force_plex_scan(self):
+        pms = PMS if PMS != '' else get_default_plex_media_scanner()
+        force_scan_command=[pms, '--refresh', '--force', '--section', str(self.id)]
+        try:
+            result = subprocess.run(force_scan_command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            print(f"Force scan output: {result.stdout}")
+        except subprocess.CalledProcessError as e:
+            print(f"Force Scan failed with error: {e.stderr}")
+
+
     def reorganize_folders(self):
+        self.force_plex_scan()
         for movie in self.movies.all():
             m=Movie(movie)    
 
@@ -58,8 +72,10 @@ class PlexMovieLib:
                     self.printText("Folder moved")
                 except FileNotFoundError:
                     pass
-        
+
+
     def rename_movie_files(self):
+        self.force_plex_scan()
         for movie in self.movies.all():
             m=Movie(movie)    
             correct_movie_filename = m.get_correct_filename()
@@ -81,36 +97,65 @@ class PlexMovieLib:
                             os.rename(file.path,correct_filepath)
                         self.printText("Rename completed")
 
-    def download_trailers(self):
+
+    def download_all_trailers(self):
+        self.force_plex_scan()
         for movie in self.movies.all():
             m=Movie(movie) 
+            self.printText(f"Now processing {m.title}")
+            stop_code = m.download_trailers()
 
-            if m.is_trailer_present():
+            if stop_code == 0:
                 self.printText(f"Trailer already exists")
-
             else:
                 self.printText(f"\n\n{m.title} ({m.year}): ")
-                filename = m.get_correct_filename()
-
-                # try searching <title> on youtube for trailers, and download
-                search_title = f"{m.title} ({m.year})"
-                download_movie_trailers(search_title, filename, m.folder_path)
-                if m.is_trailer_present():
+                if stop_code==1:
                     self.printText(f"Trailer found for {m.title}")
                 else:
-                    # if <title> doesnt work, try <original title>
                     self.printText(f"Trailer not found for {m.title}")
-                    if self.originalTitle != None and self.originalTitle.strip() != '':
-                        search_title = f"{m.originalTitle} ({m.year})"
-                        download_movie_trailers(search_title, filename, m.folder_path) 
-                        if m.is_trailer_present():
-                            self.printText(f"Trailer found for {m.originalTitle}")
-                        else:
-                            self.printText(f"Trailer not found for {m.originalTitle}")
-                
-                # sleep for a random duration. this is so that youtube doesnt get bombarded with requests
-                # Youtube could introduce captcha if this is not done
-                time.sleep(random.randint(1,MAX_SLEEP_DURATION))
+                    if stop_code==2:
+                        self.printText(f"Trailer found for {m.originalTitle}")
+                    elif stop_code ==3:
+                        self.printText(f"Trailer not found for {m.originalTitle}")               
+            time.sleep(random.randint(1,MAX_SLEEP_DURATION))
+
+
+    def load_subtitle_download_count(self):
+        if os.path.exists(SUB_DOWNLOAD_TRACK_FILE):
+            with open(SUB_DOWNLOAD_TRACK_FILE, "r") as file:
+                data = file.read().strip().split(',')
+                last_run_date = data[0]
+                download_count = int(data[1])
+                if last_run_date == datetime.now().strftime('%Y-%m-%d'):
+                    return download_count, last_run_date
+        return 0, datetime.now().strftime('%Y-%m-%d')
+
+    def save_subtitle_download_count(self):
+        with open(SUB_DOWNLOAD_TRACK_FILE, "w") as file:
+            file.write(f"{self.last_run_date},{self.subtitle_download_count}")
+
+
+    def download_all_subtitles(self):
+        self.force_plex_scan()
+        for movie in self.movies.all():
+            if self.subtitle_download_count >= MAX_DAILY_SUB_DOWNLOADS:
+                self.printText("Maximum daily subtitle downloads reached.")
+                break
+            try:
+                m = Movie(movie)
+                self.printText(f"Checking subtitles for {m.title}")
+                if m.is_subtitle_present():
+                    self.printText(f"Subtitles already present for {m.title}")
+                else:
+                    self.printText(f"Downloading subtitles for {m.title}")
+                    if m.download_subtitles():
+                        self.printText(f"Subtitles downloaded for {m.title}")
+                        self.subtitle_download_count += 1
+                    else:
+                        self.printText(f"Subtitles not found for {m.title}")
+            except Exception as e:
+                self.printText(f"Error while downloading subtitles for {m.title}: {str(e)}")
+
 
 
 

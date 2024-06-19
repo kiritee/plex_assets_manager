@@ -1,10 +1,5 @@
 Bug List
+1. When multiple titles are in same folder
+2. When same title is split over different folders
 
-2. When multiple titles are in same folder
-4. When same title is split over different folders
-5. naming file names
-
-Fixed:
-1. When title contains special characters like :
-3. When title(year) folder exists, but it does not contain the file
 

@@ -6,9 +6,10 @@ name = "pypi"
 [packages]
 plexapi = "*"
 cinemagoer = "*"
-yt-dlp = "==2023.3.4"
+yt-dlp = "*"
 phantomjs = "*"
 argparse = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
