@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='plex_extension',
+    name='plex_assets_manager',
     version='0.1.0',
     packages=find_packages(),
     include_package_data=True,
@@ -15,7 +15,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'plex_extension=plex_extension.main:main',
+            'plex_assets_manager=plex_assets_manager.main:main',
         ],
     },
     author='Kiritee Konark Mishra',

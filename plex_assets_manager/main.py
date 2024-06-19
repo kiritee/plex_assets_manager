@@ -1,5 +1,5 @@
-from conf import *
-from PlexMovieLib import PlexMovieLib
+from plex_assets_manager.conf import *
+from plex_assets_manager.PlexMovieLib import PlexMovieLib
 from argparse import ArgumentParser
 
 def main():
